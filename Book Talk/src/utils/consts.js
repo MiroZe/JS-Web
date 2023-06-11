@@ -1,0 +1,1 @@
+exports.JWT_SECRET = '3535tjkb678tghjgjh'
