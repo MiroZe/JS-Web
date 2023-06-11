@@ -1,5 +1,6 @@
+const { log } = require('console');
 const { hasUser } = require('../middlewares/hasUser');
-const { getAll, createBook, getOneBook, editBook, deleteBook } = require('../services/bookServise');
+const { getAll, createBook, getOneBook, editBook, deleteBook, wishBook } = require('../services/bookServise');
 const { parseErrors } = require('../utils/parseErrors');
 
 const bookController = require('express').Router();
@@ -44,12 +45,17 @@ bookController.get('/:bookId/details', async (req,res) => {
     const bookId = req.params.bookId
 
     try {
-        const book = await getOneBook(bookId).lean()
+        const book = await getOneBook(bookId).lean();
+        console.log(book.wishList);
        
         if(req.user?._id) {
+           
             if(req.user._id == book.creator._id) {
                 book.isCreator = true
-            }
+                
+            } else if(book.wishList.some(f => f._id == req.user._id)){
+                book.isAlreadyWished = true
+             }
         }
             
         res.render('books/details', {title: 'Details Page', book})
@@ -103,6 +109,31 @@ bookController.get('/:bookId/delete', async (req,res) => {
     } catch (error) {
         res.render('404', {errors: parseErrors(error)})
     }
+})
+
+bookController.get('/:bookId/wish', hasUser, async (req,res) => {
+
+    const userId = req.user._id
+    
+    const book = await getOneBook(req.params.bookId).populate('wishList').lean();
+        try {
+            
+    
+            if(book.wishList.some(f => f._id == userId)) {
+                throw new Error(' You can wish twice same book')
+            } else {
+                await wishBook(req.params.bookId,userId)
+                res.redirect(`/books/${req.params.bookId}/details`)
+            }
+
+            
+        } catch (error) {
+        res.render('books/details' , {title: 'Details Page', errors: parseErrors(error)}, book)
+        
+        }
+
+
+
 })
 
 module.exports = bookController

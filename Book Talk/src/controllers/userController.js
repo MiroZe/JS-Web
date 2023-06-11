@@ -1,3 +1,5 @@
+const { hasUser } = require('../middlewares/hasUser');
+const { getMyWishedBooks } = require('../services/bookServise');
 const { register, login } = require('../services/userServices');
 const { parseErrors } = require('../utils/parseErrors')
 
@@ -48,7 +50,7 @@ userController.post('/register', async (req, res) => {
         res.redirect('/')
 
     } catch (error) {
-        console.log(error);
+        
         res.render('register',
             {
                 title: 'Register Page',
@@ -63,4 +65,15 @@ userController.get('/logout', (req, res) => {
     res.redirect('/')
 })
 
+
+userController.get('/profile', hasUser, async (req,res)=> {
+
+    try {
+       const books =  await getMyWishedBooks(req.user._id).lean()
+       res.render('profile', {title : 'Profile Page', books})
+    
+   } catch (error) {
+    res.render('profile', {title : 'Profile Page',errors: parseErrors(error)})
+   }
+})
 module.exports = userController;

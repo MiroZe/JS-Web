@@ -20,4 +20,9 @@ exports.editBook = (bookData, bookId, ) => {
     return Book.findByIdAndUpdate(bookId,bookData, {runValidators:true})
 }
 
-exports.deleteBook = (bookId) => Book.findByIdAndDelete(bookId)
+exports.deleteBook = (bookId, userId) => Book.findByIdAndDelete(bookId);
+exports.wishBook = (bookId,userId) => Book.findByIdAndUpdate(bookId, {$push :{wishList:userId}})
+
+exports.getMyWishedBooks = (userId) => {
+  return Book.find({wishList : userId})
+}

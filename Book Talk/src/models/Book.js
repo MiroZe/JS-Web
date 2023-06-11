@@ -15,7 +15,9 @@ const bookSchema = new Schema({
     imageUrl: {type:String, 
             validate: {validator:(value)=> imagePattern.test(value),message: 'Invalid Url'}},
     review: { type: String, required: true, minLength: [10, 'Review should be minimum 10 characters long'] },
-    creator: { type: ObjectId, ref: 'User' }
+    creator: { type: Types.ObjectId, ref: 'User' },
+    wishList: { type:[ Types.ObjectId], ref: 'User', default: []}
+  
 
 })
 
