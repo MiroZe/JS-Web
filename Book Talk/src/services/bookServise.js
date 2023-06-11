@@ -14,8 +14,10 @@ exports.getOneBook = (bookId) => {
     return Book.findById(bookId)
 }
 
-exports.editBook = (bookData, bookId) => {
+exports.editBook = (bookData, bookId, ) => {
     
 
-    return Book.findByIdAndUpdate(bookId,bookData)
+    return Book.findByIdAndUpdate(bookId,bookData, {runValidators:true})
 }
+
+exports.deleteBook = (bookId) => Book.findByIdAndDelete(bookId)

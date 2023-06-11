@@ -1,5 +1,5 @@
 const { hasUser } = require('../middlewares/hasUser');
-const { getAll, createBook, getOneBook, editBook } = require('../services/bookServise');
+const { getAll, createBook, getOneBook, editBook, deleteBook } = require('../services/bookServise');
 const { parseErrors } = require('../utils/parseErrors');
 
 const bookController = require('express').Router();
@@ -62,7 +62,7 @@ bookController.get('/:bookId/details', async (req,res) => {
     }
 })
 
-bookController.get('/:bookId/edit',async (req,res) => {
+bookController.get('/:bookId/edit',hasUser, async (req,res) => {
 
     try {
         const book = await getOneBook(req.params.bookId).lean();
@@ -74,7 +74,7 @@ bookController.get('/:bookId/edit',async (req,res) => {
     
 })
 
-bookController.post('/:bookId/edit',async (req,res) => {
+bookController.post('/:bookId/edit',hasUser, async (req,res) => {
 
     const bookData = req.body
 
@@ -92,6 +92,17 @@ bookController.post('/:bookId/edit',async (req,res) => {
         book:bookData})
     }
     
+})
+
+bookController.get('/:bookId/delete', async (req,res) => {
+
+    try {
+        await deleteBook(req.params.bookId);
+        res.redirect('/books/catalog')
+        
+    } catch (error) {
+        res.render('404', {errors: parseErrors(error)})
+    }
 })
 
 module.exports = bookController
