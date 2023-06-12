@@ -2,7 +2,7 @@ const { JWT_SECRET } = require("../utils/const")
 const { jwtVerify } = require("../utils/jwt")
 
 
-exports.isAuth = async (req,res,next) => {
+async function isAuth (req,res,next)  {
     
 
     const token = req.cookies.token
@@ -22,3 +22,5 @@ exports.isAuth = async (req,res,next) => {
     next()
 
 }
+
+module.exports = isAuth
