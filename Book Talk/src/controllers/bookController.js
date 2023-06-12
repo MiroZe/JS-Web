@@ -70,8 +70,15 @@ bookController.get('/:bookId/details', async (req,res) => {
 
 bookController.get('/:bookId/edit',hasUser, async (req,res) => {
 
+   
+
     try {
+
         const book = await getOneBook(req.params.bookId).lean();
+        if(req.user._id !== book.creator._id) {
+            res.redirect('/auth/login')
+        }
+
         res.render('books/edit', {title: 'Edit Book Page', book})
         
     } catch (error) {
@@ -85,6 +92,10 @@ bookController.post('/:bookId/edit',hasUser, async (req,res) => {
     const bookData = req.body
 
     try {
+        if(req.user._id !== book.creator._id) {
+            res.redirect('/auth/login')
+        }
+
         if(Object.values(req.body).some(f => f == '')) {
             throw new Error('All fields are mandatory')
         }
@@ -100,9 +111,13 @@ bookController.post('/:bookId/edit',hasUser, async (req,res) => {
     
 })
 
-bookController.get('/:bookId/delete', async (req,res) => {
+bookController.get('/:bookId/delete', hasUser, async (req,res) => {
 
     try {
+        if(req.user._id !== book.creator._id) {
+            res.redirect('/auth/login')
+        }
+        
         await deleteBook(req.params.bookId);
         res.redirect('/books/catalog')
         
