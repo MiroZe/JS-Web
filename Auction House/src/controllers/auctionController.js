@@ -1,4 +1,4 @@
-const { getAll, createPublication, getOne, updateAuction } = require('../services/auctionService');
+const { getAll, createPublication, getOne, updateAuction, deleteAuction} = require('../services/auctionService');
 const { parseError, generateOptions } = require('../utils/parser');
 const {hasUser} = require('../middlewares/guard')
 const {options} = require('../utils/const')
@@ -86,10 +86,13 @@ auctionController.get('/:auctionId/edit' , hasUser, async (req,res) => {
 
     try {
         const auction = await getOne(req.params.auctionId).lean()
+        
+
+        if(req.user._id != auction.author._id){
+            res.redirect('/auth/login')
+        }
         const result = generateOptions(auction.category)
 
-        
-       
        res.render('auction/edit', {auction,result})
         
     } catch (error) {
@@ -110,8 +113,6 @@ auctionController.post('/:auctionId/edit' , hasUser, async (req,res) =>{
             author: req.user._id
         }
 
-        
-    
         try {
             await updateAuction(req.params.auctionId, auctionData)
             res.redirect(`/auction/${req.params.auctionId}/details`)
@@ -120,6 +121,18 @@ auctionController.post('/:auctionId/edit' , hasUser, async (req,res) =>{
         }
     
 
+})
+
+auctionController.get('/:auctionId/delete', hasUser, async (req,res)=> {
+
+    try {
+        await deleteAuction(req.params.auctionId);
+        res.redirect('/auction/catalog')
+        
+    } catch (error) {
+        res.render('404', {errors: parseError(eror)})
+    }
+     
 })
 
 

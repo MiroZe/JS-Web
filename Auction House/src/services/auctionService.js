@@ -15,6 +15,10 @@ exports.getOne = (id) => {
     return Auction.findById(id)
 }
 
-exports.updateAuction = async (id, auctionData) => {
+exports.updateAuction =  (id, auctionData) => {
     return Auction.findByIdAndUpdate(id, auctionData, {runValidators:true})
+}
+
+exports.deleteAuction = (id) => {
+    return Auction.findByIdAndDelete(id)
 }
