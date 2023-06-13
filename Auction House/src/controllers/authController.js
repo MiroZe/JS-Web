@@ -6,33 +6,44 @@ const authController = require('express').Router()
 
 
 authController.get('/register', (req,res) => {
-    //TODO replace with actual view by assignment
+    
     res.render('register', {
         title:'Register'
     })
 })
 
 authController.post('/register', async (req,res) => {
+
+    const {email,firstName,lastName,password,repeatPassword} = req.body
    
    try {
-    if(req.body.username == '' || req.body.password == '') {
-        throw new Error('All fields are required')
+    if(Object.values(req.body).some(f => f == '')) {
+        throw new Error('All fields are mandatory')
     }
-    if(req.body.password != req.body.repass) {
+
+    if(password.length < 5 ) {
+        throw new Error('Password is too short')
+
+    }
+   
+    if(password != repeatPassword) {
         throw new Error ('Passwords do not match!')
     }
-       const token = await register(req.body.username, req.body.password)
+       const token = await register(email,firstName,lastName,password)
        res.cookie('token', token);
       res.redirect('/')
    } catch (error) {
-    const errors = parseError(error);
+    
 
-    //TODO add error display to actual template from assignment
+    
         res.render('register', {
             title:'Register Page',
-            errors,
+            errors: parseError(error),
             body : {
-                username: req.body.username
+                email: req.body.email,
+                firstName:req.body.firstName,
+                lastName:req.body.lastName,
+
             }
 
         } )
@@ -40,27 +51,29 @@ authController.post('/register', async (req,res) => {
 })
 
 authController.get('/login', (req,res) => {
-     //TODO replace with actual view by assignment
-    res.render('login', {
-        title:'Login Page'
-    })
+     
+    res.render('login' )
 })
 
 authController.post('/login', async (req,res) => {
    try {
-    const token = await login(req.body.username, req.body.password)
+
+    if(req.body.email == '' || req.body.password == '') {
+        throw new Error('All fields are mandatory')
+
+    }
+    const token = await login(req.body.email, req.body.password)
     res.cookie('token', token)
-    //TODO redirect according assingnment
+   
     res.redirect('/')
    } catch (error) {
-    //TODO add error display to actual template from assignment
 
     const errors = parseError(error)
     res.render('login', {
         title:'Login Page',
-        errors,
+        errors: parseError(error),
         body: {
-            username: req.body.username
+            email: req.body.email
         }
     })
    }

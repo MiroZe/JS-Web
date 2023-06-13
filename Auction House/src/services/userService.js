@@ -1,19 +1,22 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
+const {JWT_SECRET} = require('../utils/const')
 
 const { jwtSign } = require('../utils/jwt')
 
 
-async function register (username,password) {
-const existing = await User.findOne({username}).collation({locale :'en', strength: 2})
+async function register (email,firstName,lastName,password) {
+const existing = await User.findOne({email}).collation({locale :'en', strength: 2})
 if(existing) {
-    throw new Error ('Username is already exist')
+    throw new Error ('Email is already exist')
 }
 const hashedPassword = await bcrypt.hash(password, 7)
 
 const user = await User.create( {
- username,
- hashedPassword
+ email,
+ password: hashedPassword,
+ firstName,
+ lastName
 })
 
 return createSession(user)
@@ -22,14 +25,14 @@ return createSession(user)
 //TODO see assignment if registration creates user session
 }
 
-async function login (username, password) {
-    const user = await User.findOne({username})
+async function login (email, password) {
+    const user = await User.findOne({email})
                 .collation({locale:'en', strength:2})
     if(!user) {
         throw new Error('Username doesnt exist or password is incorrect')
     }
 
-    const passwordCheck  = await bcrypt.compare(password,user.hashedPassword)
+    const passwordCheck  = await bcrypt.compare(password,user.password)
     if(!passwordCheck) {
         throw new Error('Username doesnt exist or password is incorrect')
     }
@@ -37,10 +40,12 @@ async function login (username, password) {
 
 }
 
-function createSession ({_id, username}) {
+function createSession ({_id, email,firstName,lastName}) {
 const payload = {
     _id,
-    username,
+    email,
+    firstName,
+    lastName
 };
 
 return token = jwtSign(payload, JWT_SECRET);

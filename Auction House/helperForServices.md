@@ -58,3 +58,7 @@ bookController.get('/:bookId/details', async (req,res) => {
         
     }
 })
+
+
+imageUrl: {type:String, 
+            validate: {validator:(value)=> imagePattern.test(value),message: 'Invalid Url'}},
