@@ -20,6 +20,8 @@ userSchema.index({email:1}, {
     }
 });
 
+userSchema.virtual('fullName').get(function() { return `${this.firstName} ${this.lastName}`})
+
 const User = model('User', userSchema)
 
 module.exports = User;

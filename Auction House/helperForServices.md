@@ -62,3 +62,17 @@ bookController.get('/:bookId/details', async (req,res) => {
 
 imageUrl: {type:String, 
             validate: {validator:(value)=> imagePattern.test(value),message: 'Invalid Url'}},
+
+
+
+
+
+            const auctionSchema = new Schema ({
+    title : {type: String, required:true, minLength: [4, 'Title should be 4 characters ate least']},
+    description : {type: String,required:true,  minLength: [200, 'Description should be 200 characters ate least']},
+    category : {type: String,required:true, enum: ['Vehicles','Real Estate','Electronics','Furniture', 'Other']},
+    imageUrl : {type: String,required:true,},
+    Price : {type: Number,required:true, min: [0, 'Price should be positive number']},
+    author : {type: Types.ObjectId, ref: 'User', required:true},
+    bidder: {type:[Types.ObjectId], ref:'User', default:[] }
+})
