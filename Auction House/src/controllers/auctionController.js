@@ -185,7 +185,7 @@ auctionController.get('/:auctionId/close', hasUser, async (req,res) => {
 })
 
 
-auctionController.get('/closed', async (req,res) => {
+auctionController.get('/closed', hasUser, async (req,res) => {
 
     try {
         
