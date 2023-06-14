@@ -1,0 +1,13 @@
+[x]1.Use templates
+[x]2.Use of database
+[ ]3.User resgisration and session
+[ ]-3.1 cookies and session
+[ ]-3.2 hashing password
+[x]-3.3 JSON Web Token
+[ ]4.Error Handling
+[ ]5.Full CRUD
+[ ]-5.1 catalog
+[ ]-5.2 details
+[ ]-5.3 credit
+[ ]-5.5 edit
+[ ]-5.5 delete
