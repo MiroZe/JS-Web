@@ -9,7 +9,8 @@ const auctionSchema = new Schema ({
     imageUrl : {type: String,required:true,},
     price : {type: Number,required:true, min: [0, 'Price should be positive number']},
     author : {type: Types.ObjectId, ref: 'User', required:true},
-    bidder: {type:Types.ObjectId, ref:'User' }
+    bidder: {type:Types.ObjectId, ref:'User' },
+    closed: {type: Boolean, default: false}
 })
 
 

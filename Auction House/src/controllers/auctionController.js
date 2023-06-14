@@ -1,4 +1,4 @@
-const { getAll, createPublication, getOne, updateAuction, deleteAuction, bid} = require('../services/auctionService');
+const { getAll, createPublication, getOne, updateAuction, deleteAuction,myClosedAuctions } = require('../services/auctionService');
 const { parseError, generateOptions } = require('../utils/parser');
 const {hasUser} = require('../middlewares/guard')
 const {options} = require('../utils/const');
@@ -95,7 +95,6 @@ auctionController.get('/:auctionId/details',async (req,res) => {
         res.render('auction/details', {errors: parseError(error)})
     }
 
-
 })
 
 auctionController.get('/:auctionId/edit' , hasUser, async (req,res) => {
@@ -177,6 +176,27 @@ auctionController.post('/:auctionId/details', hasUser, async(req,res) => {
 
 })
 
+auctionController.get('/:auctionId/close', hasUser, async (req,res) => {
+
+    const auction = await getOne(req.params.auctionId);
+    auction.closed = true;
+    await updateAuction(req.params.auctionId, auction);
+    res.redirect('/')
+})
+
+
+auctionController.get('/closed', async (req,res) => {
+
+    try {
+        
+        const allClosed = await myClosedAuctions(req.user._id).populate('bidder').lean()
+      
+
+        res.render('auction/closed', {allClosed})
+    } catch (error) {
+        res.render('auction/closed', {errors:parseError(error)})
+    }
+})
 
    
     

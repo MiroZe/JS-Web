@@ -76,3 +76,26 @@ imageUrl: {type:String,
     author : {type: Types.ObjectId, ref: 'User', required:true},
     bidder: {type:[Types.ObjectId], ref:'User', default:[] }
 })
+
+
+
+
+async function searchCourse(query) {
+
+    
+        const results =  await Course.find({title : { $regex: new RegExp(query, 'i') }}).lean()
+        return results
+
+  
+}
+
+
+function searchGame(nameQuery, gamePlatform) {
+
+    
+    return Game.find()
+    .where({name : { $regex: new RegExp(nameQuery, 'i') }})
+    .where({platform: { $regex: new RegExp(gamePlatform, 'i') }})
+
+
+}

@@ -3,7 +3,7 @@ const Auction = require("../models/Auction")
 
 
 exports.getAll = () => {
-    return Auction.find()
+    return Auction.find().where({closed:false})
 }
 
 exports.createPublication = async (data) => {
@@ -22,4 +22,10 @@ exports.updateAuction =  (id, auctionData) => {
 exports.deleteAuction = (id) => {
     return Auction.findByIdAndDelete(id)
 }
+
+exports.myClosedAuctions = (id) => {
+    return Auction.find().where({author:id}).where({closed:true})
+}
+
+
 

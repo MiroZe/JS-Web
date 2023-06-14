@@ -32,12 +32,8 @@
                         <!-- If     there is a bidder -->
                             {{#if auction.bidderNames}}
                         Bid by <strong>{{auction.bidderNames}}</strong>
-
+                        <a class="action pad-med cta" href="/auction/{{auction._id}}/close">Close Auction</a>
                         <!-- # Bonus: If there is a bidder --><!--
-
-                                    <a class="action pad-med cta" href="#">Close Auction</a>
-                                    
-                                    # End of Bonus -->
 
                             {{else}}<!-- If there are no bids -->
                         No bids
