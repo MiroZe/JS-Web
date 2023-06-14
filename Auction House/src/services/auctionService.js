@@ -22,3 +22,4 @@ exports.updateAuction =  (id, auctionData) => {
 exports.deleteAuction = (id) => {
     return Auction.findByIdAndDelete(id)
 }
+

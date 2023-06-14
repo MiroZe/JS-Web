@@ -29,30 +29,37 @@
                     {{#if user}}
                         {{#if auction.isAuthor}}
                     <div>
-                                    <!-- If there is a bidder -->
-                                    Bid by <strong>John Maclane</strong>
+                        <!-- If     there is a bidder -->
+                            {{#if auction.bidderNames}}
+                        Bid by <strong>{{auction.bidderNames}}</strong>
 
-                                    <!-- # Bonus: If there is a bidder --><!--
+                        <!-- # Bonus: If there is a bidder --><!--
 
                                     <a class="action pad-med cta" href="#">Close Auction</a>
                                     
                                     # End of Bonus -->
 
-                                    <!-- If there are no bids -->
-                                    No bids
-                                </div>
-                                {{/if}}
+                            {{else}}<!-- If there are no bids -->
+                        No bids
+                            {{/if}}
+                    </div>
+                    {{/if}}
                     <!-- If current user can place a bid -->
+                    {{#if auction.currentWinner}}
                     <form class="vertical" method="post">
                         <label><span>Bid amount</span><input type="number" name="bid"></label>
                         <input class="action" type="submit" value="Place bid">
                     </form>
+                    {{/if}}
+                   
 
-                    <!-- If current user is the bidder -->
+                    {{#unless auction.isAuthor}}<!-- If current user is the bidder -->
                     <div>
                         You are currently the <strong>highest bidder</strong> for this auction
                     </div>
+                    {{/unless}}
                     {{/if}}
+                   
                 </div>
 
             </div>

@@ -1,7 +1,8 @@
-const { getAll, createPublication, getOne, updateAuction, deleteAuction} = require('../services/auctionService');
+const { getAll, createPublication, getOne, updateAuction, deleteAuction, bid} = require('../services/auctionService');
 const { parseError, generateOptions } = require('../utils/parser');
 const {hasUser} = require('../middlewares/guard')
-const {options} = require('../utils/const')
+const {options} = require('../utils/const');
+const { findUser } = require('../services/userService');
 
 
 const auctionController = require('express').Router();
@@ -63,14 +64,29 @@ try {
 
 auctionController.get('/:auctionId/details',async (req,res) => {
 
+    
+    const auction = await getOne(req.params.auctionId).populate('author').lean();
+
     try {
         
-        const auction = await getOne(req.params.auctionId).populate('author').lean()
     
-
+        
         if(req.user) {
-            if(req.user._id == auction.author._id) {
+
+           
+            if(req.user._id == auction.author?._id) {
                 auction.isAuthor = true;
+                if(auction.bidder?._id) {
+
+                    const currentWinner = await findUser(auction.bidder._id)
+                    auction.bidderNames = `${currentWinner.firstName} ${currentWinner.lastName}`
+                }
+                
+            } else if(auction.bidder?._id != req.user._id) {
+                auction.currentWinner = true;
+                
+            } else if (auction.bidder?._id == req.user._id) {
+                auction.currentWinner = false;
             }
         }
         auction.fullName = `${auction.author.firstName} ${auction.author.lastName}`
@@ -133,6 +149,32 @@ auctionController.get('/:auctionId/delete', hasUser, async (req,res)=> {
         res.render('404', {errors: parseError(eror)})
     }
      
+})
+
+auctionController.post('/:auctionId/details', hasUser, async(req,res) => {
+
+    const userId = req.user._id
+    const price = Number(req.body.bid)
+    const auction = await getOne(req.params.auctionId).lean()
+    try {
+        if(auction.author._id == userId) {
+            throw new Error('You can bid on your own offer!')
+        }
+        
+        if(auction.price >= price) {
+            throw new Error('Price should be greater than offer price')
+        }
+        auction.price = price
+        auction.bidder = req.user._id
+        await updateAuction(req.params.auctionId,auction)
+        res.redirect(`/auction/${req.params.auctionId}/details`)
+
+    } catch (error) {
+        res.render('auction/details', {errors:parseError(error), auction})
+    }
+    
+
+
 })
 
 

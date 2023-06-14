@@ -53,6 +53,11 @@ return token = jwtSign(payload, JWT_SECRET);
 }
 
 
+function findUser (userId) {
+    return User.findById(userId)
+}
+
+
 
 
 
@@ -60,5 +65,6 @@ return token = jwtSign(payload, JWT_SECRET);
 module.exports = {
     register,
     login,
+    findUser
     
 }
