@@ -1,6 +1,6 @@
 const { hasUser } = require('../middlewares/guard');
-const { createCrypto, getAllCrypto, getOneCrypto, buyCrypto, deleteCrypto } = require('../services/cryptoServices');
-const { parseError } = require('../utils/parser');
+const { createCrypto, getAllCrypto, getOneCrypto, buyCrypto, deleteCrypto, updateCrypto, search } = require('../services/cryptoServices');
+const { parseError, generateOptions } = require('../utils/parser');
 
 const cryptoController = require('express').Router();
 
@@ -75,6 +75,74 @@ cryptoController.get('/:cryptoId/delete', hasUser, async(req,res)=> {
     }
 })
 
+cryptoController.get('/:cryptoId/edit', hasUser, async(req,res)=> {
+    try {
+        const oneCrypto = await getOneCrypto(req.params.cryptoId).lean()
+        const options = generateOptions(oneCrypto.paymentMethod)
+        console.log(options);
+        console.log(oneCrypto.paymentMethod);
+
+        res.render('edit', {oneCrypto, options})
+    } catch (error) {
+        res.render('edit', {errors: parseError(error)})
+    }
+})
+
+
+cryptoController.post('/:cryptoId/edit', hasUser, async(req,res)=> {
+
+    const data = {
+        name: req.body.name,
+        image: req.body.image,
+        price: Number(req.body.price),
+        description: req.body.description,
+        paymentMethod: req.body.paymentMethod,
+        
+    }
+
+    try {
+        if(Object.values(data).some(f => f== '')) {
+            throw new Error( 'All fields are mandatory')
+        }
+        console.log(data.paymentMethod);
+
+        await updateCrypto(req.params.cryptoId, data)
+        res.redirect(`/crypto/${req.params.cryptoId}/details`)
+    } catch (error) {
+        const options = generateOptions(data.paymentMethod)
+        res.render('edit', {options, oneCrypto: data, errors: parseError(error)})
+    }
+})
+
+cryptoController.get('/search', hasUser, async (req, res)=> {
+   
+    try {
+        const foundMatches = await getAllCrypto().lean()
+
+      
+        res.render('search', {foundMatches})
+    } catch (error) {
+        res.render('search', {errors:parseError(error)})
+    }
+
+
+})
+
+cryptoController.post('/search', hasUser, async (req,res)=> {
+    const nameQuery = req.body.name
+   
+    
+    const paymentMethod = req.body.paymentMethod
+    
+
+try {
+    const foundMatches = await search(nameQuery,paymentMethod).lean();
+    
+    res.render('search',{foundMatches} )
+} catch (error) {
+    res.render('search', {nameQuery,errors:parseError(error)})
+}
+})
 
 
 module.exports = cryptoController

@@ -15,5 +15,6 @@
 [ ]12. create controller and service file and add and use it at routes
 [ ]13. create Create page and view 
 [ ]    13.1. check form name, method and rename it as Model structure
+[ ] 14. dont forget runvalidator: true after find edit 
  enjoy
 

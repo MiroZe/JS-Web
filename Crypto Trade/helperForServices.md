@@ -61,20 +61,31 @@ bookController.get('/:bookId/details', async (req,res) => {
 
 
 
-
-function generateOptions(category) {
+function generateOptions(paymentMethod) {
     const  options = {
-        estate: 'Real Estate',
-        vehicles: 'Vehicles',
-        furniture: 'Furniture',
-        electronics: 'Electronics',
-        other: 'Other'}
+        "crypto-wallet": 'Crypto Wallet',
+        "credit-card": 'Credit Card',
+        "debit-card": 'Debit Card',
+        "paypal": 'PayPal',
+        }
 
 
-        const result = Object.keys(options).map((key) => ({
+        const generated = Object.keys(options).map((key) => ({
             title: options[key],
             value: key,
-            selected: category === options[key]
+            selected: paymentMethod === key
         }));
-        return result
+        return generated
+}
+
+
+
+function searchGame(nameQuery, gamePlatform) {
+
+    
+    return Game.find()
+    .where({name : { $regex: new RegExp(nameQuery, 'i') }})
+    .where({platform: { $regex: new RegExp(gamePlatform, 'i') }})
+
+
 }
