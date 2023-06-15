@@ -1,3 +1,4 @@
+const { getMyPhotos } = require('../services/photoService')
 const { register,login } = require('../services/userService')
 const { parseError } = require('../utils/parser')
 
@@ -75,6 +76,22 @@ userController.post('/login', async (req,res) => {
 userController.get('/logout', (req,res)=> {
     res.clearCookie('token')
     res.redirect('/')
+})
+
+
+userController.get('/profile' , async (req,res)=> {
+
+    try {
+        
+        const myPhotos = await getMyPhotos(req.user._id).lean()
+        const length = myPhotos.length
+       
+        
+        res.render('profile', {myPhotos, length})
+    } catch (error) {
+        res.render('proefile', {errrors: parseError(error)})
+    }
+
 })
 
 module.exports = userController

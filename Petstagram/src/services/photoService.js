@@ -29,3 +29,4 @@ exports.postComment = async (photoId, comment, userId) => {
 
 exports.updatePhoto = (id,data) => Photo.findByIdAndUpdate(id,data, {runValidators:true})
 exports.deletePhoto =(id) => Photo.findByIdAndDelete(id)
+exports.getMyPhotos = (userId) => Photo.find({owner : userId})
