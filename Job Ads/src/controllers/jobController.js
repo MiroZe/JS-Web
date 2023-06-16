@@ -87,12 +87,31 @@ jobController.get('/:jobId/delete', hasUser, async (req,res)=> {
 jobController.get('/:jobId/edit', hasUser, async (req,res)=> {
 
     try {
-        const currentPosition = await getOneOpenedPosition(req.params._id)
-        //
-        res.redirect('/job/catalog')
+        const currentPosition = await getOneOpenedPosition(req.params.jobId).lean()
+       
+        res.render('edit', {currentPosition})
         
     } catch (error) {
-        res.render('details', {errors: parseError(error)})
+        res.render('edit', {errors: parseError(error)})
+    }
+})
+
+jobController.post('/:jobId/edit', hasUser, async (req, res)=> {
+
+    
+    const jobData = {
+        headline:req.body.headline,
+        location:req.body.location,
+        companyName:req.body.companyName,
+        companyDescription:req.body.companyDescription,
+   
+    }
+    try {
+        await editPosition(req.params.jobId, jobData)
+        res.redirect(`/job/${req.params.jobId}/details`)
+    } catch (error) {
+        res.render('edit', {errors: parseError(error), currentPosition: jobData})
+        
     }
 })
 

@@ -1,18 +1,19 @@
-const { register,login } = require('../services/userService')
-const { parseError } = require('../utils/parser')
+const userController = require('express').Router();
+const { alreadyLogged } = require('../middlewares/guard');
+const { register,login } = require('../services/userService');
+const { parseError } = require('../utils/parser');
 
-const userController = require('express').Router()
 
 
 
-userController.get('/register', (req,res) => {
-    //TODO replace with actual view by assignment
+userController.get('/register', alreadyLogged, (req,res) => {
+    
     res.render('register', {
         title:'Register'
     })
 })
 
-userController.post('/register', async (req,res) => {
+userController.post('/register',alreadyLogged, async (req,res) => {
    
    try {
     if(Object.values(req.body).some(f => f == '')) {
@@ -41,14 +42,14 @@ userController.post('/register', async (req,res) => {
    }
 })
 
-userController.get('/login', (req,res) => {
+userController.get('/login', alreadyLogged,(req,res) => {
    
     res.render('login', {
         title:'Login Page'
     })
 })
 
-userController.post('/login', async (req,res) => {
+userController.post('/login',alreadyLogged, async (req,res) => {
    try {
     const token = await login(req.body.email, req.body.password)
     res.cookie('token', token)
