@@ -1,8 +1,10 @@
 const Ad = require('../models/Ad')
+const User = require('../models/User')
 
 
 exports.createOpenPosition = (jobData) => {
 
+    
     return  Ad.create(jobData)
   
   }
@@ -13,3 +15,4 @@ exports.applyForJob = (jobId, userId) => Ad.findByIdAndUpdate(jobId, {$push: {ap
 exports.getThreePositions = () => Ad.find().limit(3)
 exports.deletePosition = (id) => Ad.findByIdAndDelete(id)
 exports.editPosition = (id, data) => Ad.findByIdAndUpdate(id,data, {runValidators:true})
+

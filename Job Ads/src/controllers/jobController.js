@@ -115,5 +115,21 @@ jobController.post('/:jobId/edit', hasUser, async (req, res)=> {
     }
 })
 
+jobController.get('/search', hasUser, (req,res)=> {
+
+    res.render('search')
+})
+
+jobController.post('/search', hasUser, async (req,res)=> {
+    const emailQuery = req.body.emailQuery
+    
+
+    const all = await getallOpenedPositions().populate('author').lean();
+    const filtered = all.filter( r=>(( r.author.email).toLowerCase()).includes(emailQuery.toLowerCase()))
+   
+
+    res.render('search', {filtered,emailQuery})
+})
+
 
 module.exports = jobController
