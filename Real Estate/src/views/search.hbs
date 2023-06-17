@@ -1,0 +1,25 @@
+
+            <form class="search"  method="post">
+                <input type="search" name="typeQuery" placeholder="Search here..." value="{{typeQuery}}">
+                <button type="submit">Search</button>
+            </form>
+                {{#if founded}}
+            <section id="find-section">
+
+                <!-- If there are any matching matches from the search, show each of them -->
+                {{#each founded}}
+                <div class="card">
+                    <h3>{{name}}</h3>
+                    <p>{{description}}</p>
+                    <div class="cta-container"><a href="/house/{{_id}}/details" class="det-link">Details</a></div>
+                    <div class="card_circle"><img src="{{image}}"></div>
+
+                </div>
+                {{else}}
+                <!-- If there are no search matches, show: -->
+                <div class="no-data-listing">
+                    <p class="no-offer">No match was found for the submitted type...</p>
+                </div>
+                {{/each}}
+            </section>
+            {{/if}}
